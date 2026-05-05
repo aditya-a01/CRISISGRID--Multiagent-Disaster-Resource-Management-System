@@ -1,0 +1,241 @@
+{
+  "info": {
+    "name": "CrisisGrid MongoDB API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Simulations",
+      "item": [
+        {
+          "name": "Create simulation",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/v1/simulations/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Test Simulation\",\n  \"description\": \"Created via Postman\",\n  \"total_timesteps\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "List simulations",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/simulations/"
+          }
+        },
+        {
+          "name": "Get simulation",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/simulations/{{SIM_ID}}"
+          }
+        },
+        {
+          "name": "Delete simulation",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/v1/simulations/{{SIM_ID}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agents",
+      "item": [
+        {
+          "name": "Add agent",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/simulations/{{SIM_ID}}/agents",
+            "query": [
+              {"key": "agent_type", "value": "hospital"},
+              {"key": "name", "value": "Central Hospital"},
+              {"key": "current_demand", "value": "40"},
+              {"key": "max_demand", "value": "100"},
+              {"key": "min_demand", "value": "10"},
+              {"key": "priority_level", "value": "1.0"},
+              {"key": "behavior_profile", "value": "cooperative"}
+            ]
+          }
+        },
+        {
+          "name": "List agents",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/simulations/{{SIM_ID}}/agents"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Allocations",
+      "item": [
+        {
+          "name": "Create allocation",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/v1/allocations/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"simulation_id\": \"{{SIM_ID}}\",\n  \"agent_id\": \"{{AGENT_ID}}\",\n  \"timestep\": 1,\n  \"resource_type\": \"power\",\n  \"allocated_amount\": 25.0,\n  \"requested_amount\": 40.0,\n  \"utility_score\": 0.62,\n  \"was_fulfilled\": 0.625\n}"
+            }
+          }
+        },
+        {
+          "name": "List allocations",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/allocations/",
+            "query": [
+              {"key": "simulation_id", "value": "{{SIM_ID}}"}
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Create event",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/v1/events/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"simulation_id\": \"{{SIM_ID}}\",\n  \"timestep\": 1,\n  \"event_type\": \"power_outage\",\n  \"severity\": 0.4,\n  \"affected_agent_type\": \"hospital\",\n  \"description\": \"Local grid failure\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List events",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/events/",
+            "query": [
+              {"key": "simulation_id", "value": "{{SIM_ID}}"}
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Timestep Logs",
+      "item": [
+        {
+          "name": "Create timestep log",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/v1/timestep-logs/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"simulation_id\": \"{{SIM_ID}}\",\n  \"timestep\": 1,\n  \"power_available\": 950.0,\n  \"water_available\": 480.0,\n  \"power_allocated\": 50.0,\n  \"water_allocated\": 20.0,\n  \"stability_score\": 0.92,\n  \"risk_level\": 0.08,\n  \"unmet_demand\": 5.0,\n  \"allocation_efficiency\": 0.9,\n  \"fairness_score\": 0.88,\n  \"total_agents\": 1,\n  \"agents_satisfied\": 1,\n  \"agents_critical\": 0,\n  \"events_occurred\": 1,\n  \"events_summary\": [\n    { \"type\": \"power_outage\", \"severity\": 0.4 }\n  ],\n  \"total_bids\": 1,\n  \"avg_utility_score\": 0.62,\n  \"highest_utility_score\": 0.62,\n  \"avg_trust_score\": 0.5,\n  \"min_trust_score\": 0.5,\n  \"max_trust_score\": 0.5,\n  \"power_satisfaction_rate\": 0.625,\n  \"water_satisfaction_rate\": 1.0,\n  \"notes\": \"First timestep log\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List timestep logs",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/timestep-logs/",
+            "query": [
+              {"key": "simulation_id", "value": "{{SIM_ID}}"}
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Summary",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/summary",
+            "query": [{"key": "simulation_id", "value": "{{SIM_ID}}"}]
+          }
+        },
+        {
+          "name": "Stability trend",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/stability",
+            "query": [{"key": "simulation_id", "value": "{{SIM_ID}}"}]
+          }
+        },
+        {
+          "name": "Fairness metrics",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/fairness",
+            "query": [{"key": "simulation_id", "value": "{{SIM_ID}}"}]
+          }
+        },
+        {
+          "name": "Event impact",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/event-impact",
+            "query": [{"key": "simulation_id", "value": "{{SIM_ID}}"}]
+          }
+        },
+        {
+          "name": "Resource efficiency",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/resource-efficiency",
+            "query": [{"key": "simulation_id", "value": "{{SIM_ID}}"}]
+          }
+        },
+        {
+          "name": "Agent allocation history",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/agent-allocation-history",
+            "query": [
+              {"key": "simulation_id", "value": "{{SIM_ID}}"},
+              {"key": "agent_id", "value": "{{AGENT_ID}}"}
+            ]
+          }
+        },
+        {
+          "name": "Agent satisfaction trend",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/agent-satisfaction",
+            "query": [
+              {"key": "simulation_id", "value": "{{SIM_ID}}"},
+              {"key": "agent_id", "value": "{{AGENT_ID}}"}
+            ]
+          }
+        },
+        {
+          "name": "Critical agents",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/critical-agents",
+            "query": [{"key": "simulation_id", "value": "{{SIM_ID}}"}]
+          }
+        },
+        {
+          "name": "High-trust agents",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/analytics/high-trust-agents",
+            "query": [
+              {"key": "simulation_id", "value": "{{SIM_ID}}"},
+              {"key": "threshold", "value": "0.5"}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

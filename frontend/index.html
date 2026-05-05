@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrisisGrid — Multi-Agent Crisis Management</title>
+  <meta name="description" content="Real-time visualization dashboard for CrisisGrid multi-agent crisis response system with autonomous resource negotiation." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ═══ LEFT SIDEBAR NAV ═══ -->
+  <nav class="sidebar-nav">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-name">CrisisGrid</div>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-section="dashboard" onclick="switchNav(this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </li>
+      <li class="nav-item" data-section="resources" onclick="switchNav(this)">
+        <span class="nav-icon">⚡</span> Resources
+      </li>
+      <li class="nav-item" data-section="agents" onclick="switchNav(this)">
+        <span class="nav-icon">🤖</span> Agents
+      </li>
+      <li class="nav-item" data-section="trends" onclick="switchNav(this)">
+        <span class="nav-icon">📈</span> Trends
+      </li>
+      <li class="nav-item" data-section="alerts" onclick="switchNav(this)">
+        <span class="nav-icon">🚨</span> Alerts
+      </li>
+    </ul>
+  </nav>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-area">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-subtitle">CrisisGrid AI</div>
+      <h1 class="page-title">CrisisGrid Frontend Interface</h1>
+      <p class="page-desc">Real-time multi-agent crisis management dashboard with adaptive allocation.</p>
+    </div>
+
+    <!-- Controls Bar (GLOBAL) -->
+    <div class="controls-bar">
+      <div class="control-group">
+        <div class="control-label">Scenario</div>
+        <select class="select-field" id="scenarioSelect">
+          <option value="default">Default Crisis</option>
+          <option value="flood">🌊 Flood</option>
+          <option value="earthquake">🏚️ Earthquake</option>
+          <option value="hurricane">🌀 Hurricane</option>
+          <option value="blackout">🔌 Blackout</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Simulation</div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnCreate" onclick="createSimulation()">⚡ New</button>
+          <button class="btn" id="btnStart" onclick="startAuto()" disabled>▶ Start</button>
+          <button class="btn btn-danger" id="btnStop" onclick="stopAuto()" disabled>⏹ Stop</button>
+          <button class="btn" id="btnStep" onclick="doStep()" disabled>⏭ Step</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Speed</div>
+        <div class="speed-btns">
+          <button class="speed-btn" onclick="setSpeed(2000)">0.5×</button>
+          <button class="speed-btn active" id="speed1x" onclick="setSpeed(1000)">1×</button>
+          <button class="speed-btn" onclick="setSpeed(500)">2×</button>
+          <button class="speed-btn" onclick="setSpeed(200)">5×</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Tick</div>
+        <div class="tick-display">t=<span id="headerTimestep">0</span>s</div>
+      </div>
+
+      <button class="btn btn-danger" id="btnReset" onclick="resetSim()" disabled style="margin-left:auto;">🗑 Delete</button>
+    </div>
+
+    <!-- Alert Banner (GLOBAL) -->
+    <div id="alertBanner" style="display:none"></div>
+
+    <!-- ═══ DASHBOARD VIEW ═══ -->
+    <div id="dashboard-view" class="view-section active">
+      <!-- Status Row -->
+      <div class="status-row">
+        <div class="stability-badge good" id="stabilityBadge">STABILITY —</div>
+        <div class="event-card" id="activeEventCard">
+          <div>
+            <div class="event-card-label">Active Event</div>
+            <div class="event-card-title" id="activeEventTitle">No active event</div>
+            <div class="event-card-desc" id="activeEventDesc">Start a simulation to see events.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Panels: Events + Explanations -->
+      <div class="bottom-panels">
+        <div class="panel-card">
+          <div class="panel-title"><span class="icon">🚨</span> Live Events</div>
+          <div class="events-feed" id="eventsFeed">
+            <div class="no-events">No events yet</div>
+          </div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-title"><span class="icon">🧠</span> AI Decision Log</div>
+          <div class="explanation-list" id="explanationList">
+            <div class="empty-state">
+              <div class="empty-icon">🧠</div>
+              <p>Reasoning will appear<br>after each step</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ RESOURCES VIEW ═══ -->
+    <div id="resources-view" class="view-section">
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title"><span class="icon">⚡</span> Resource Gauges</div>
+          <div class="gauge-group">
+            <div class="gauge-item">
+              <div class="gauge-header">
+                <div class="gauge-label">⚡ Power</div>
+                <div class="gauge-value">
+                  <span class="current" id="powerCurrent">—</span>
+                  <span class="total"> / <span id="powerTotal">1000</span></span>
+                </div>
+              </div>
+              <div class="gauge-bar-bg"><div class="gauge-bar-fill power" id="powerBar" style="width:0%"></div></div>
+            </div>
+            <div class="gauge-item">
+              <div class="gauge-header">
+                <div class="gauge-label">💧 Water</div>
+                <div class="gauge-value">
+                  <span class="current" id="waterCurrent">—</span>
+                  <span class="total"> / <span id="waterTotal">500</span></span>
+                </div>
+              </div>
+              <div class="gauge-bar-bg"><div class="gauge-bar-fill water" id="waterBar" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="metrics-sidebar" style="margin-top:14px;">
+            <div class="metric-mini">
+              <div class="metric-mini-label">Stability</div>
+              <div class="metric-mini-value good" id="metricStability">—</div>
+            </div>
+            <div class="metric-mini">
+              <div class="metric-mini-label">Risk Level</div>
+              <div class="metric-mini-value" id="metricRisk">—</div>
+            </div>
+            <div class="metric-mini">
+              <div class="metric-mini-label">Efficiency</div>
+              <div class="metric-mini-value" id="metricEfficiency">—</div>
+            </div>
+            <div class="metric-mini">
+              <div class="metric-mini-label">Fairness</div>
+              <div class="metric-mini-value" id="metricFairness">—</div>
+            </div>
+          </div>
+          <div style="margin-top:10px; font-family:var(--mono); font-size:11px; color:var(--text-muted);">
+            Unmet Demand: <span id="metricUnmet" style="color:var(--text-primary)">—</span>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="icon">📈</span> Resource Levels Over Time</div>
+          <div class="chart-container"><canvas id="chartResources"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ AGENTS VIEW ═══ -->
+    <div id="agents-view" class="view-section">
+      <div class="section-title">Agent Dashboard</div>
+      <div class="agent-grid" id="agentGrid">
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">🤖</div>
+          <p>No agents yet. Create a simulation<br>to see agents here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TRENDS VIEW ═══ -->
+    <div id="trends-view" class="view-section">
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title"><span class="icon">⚖️</span> Demand vs Supply</div>
+          <div class="chart-container"><canvas id="chartDemand"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><span class="icon">🛡️</span> Stability & Risk Trend</div>
+          <div class="chart-container"><canvas id="chartStability"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
