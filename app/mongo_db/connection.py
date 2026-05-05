@@ -30,12 +30,14 @@ class MongoDBConnection:
             # Get MongoDB URI from settings (default: mongodb://localhost:27017)
             mongo_uri = getattr(settings, 'mongodb_url', 'mongodb://localhost:27017')
             
+            import certifi
             client = MongoClient(
                 mongo_uri,
                 serverSelectionTimeoutMS=5000,
                 connectTimeoutMS=10000,
                 retryWrites=True,
-                w='majority'  # Require write acknowledgment from majority
+                w='majority',  # Require write acknowledgment from majority
+                tlsCAFile=certifi.where()
             )
 
             # Test connection

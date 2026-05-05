@@ -1,6 +1,10 @@
 /* CrisisGrid Frontend — app.js */
 
-const API = 'http://localhost:8000/api/v1';
+// Determine API URL based on environment
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API = isLocal 
+  ? 'http://localhost:8000/api/v1' 
+  : 'https://YOUR_RENDER_APP_URL.onrender.com/api/v1'; // Replace with actual Render URL after deployment
 let state = {
   simId: null, simName: '', running: false, intervalId: null,
   speed: 1000, timestep: 0, totalTimesteps: 100,
