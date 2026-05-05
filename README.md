@@ -1,61 +1,100 @@
-# CrisisGrid Backend Engine
+# CrisisGrid
 
-Multi-agent crisis response system with autonomous negotiation and resource allocation.
+CrisisGrid is a FastAPI-based simulation backend for multi-agent crisis response.
+It models autonomous infrastructure actors (hospital, water, power, emergency) that negotiate and allocate limited resources over time.
 
-## Features
+## Highlights
 
-- **Autonomous Agents**: Hospital, Water, Power, Emergency response agents
-- **Real-time Negotiation**: Utility-based bidding system for resource allocation
-- **Behavioral AI**: Risk tolerance, cooperation levels, and adaptive decision-making
-- **Dependency Management**: Prevents cascading failures with dependency graph
-- **System Constraints**: Enforces minimum life-critical requirements
-- **Persistence**: Full simulation history with SQLAlchemy + SQLite/PostgreSQL
+- Autonomous agents with configurable behavior, risk tolerance, and cooperation profiles
+- Resource allocation and bidding logic for constrained crisis scenarios
+- Dependency-aware simulation to reduce cascading service failures
+- REST API for simulations, events, allocations, logs, and analytics
+- Dual persistence paths: SQLAlchemy (SQLite/PostgreSQL) and MongoDB modules
+- Included Postman collection for endpoint testing
 
-## Project Structure
+## Tech Stack
+
+- Python
+- FastAPI
+- SQLAlchemy + Pydantic
+- MongoDB (optional backend path)
+- Pytest
+
+## Repository Layout
 
 ```
-├── app/
-│   ├── models/          # SQLAlchemy ORM models
-│   ├── schemas/         # Pydantic request/response schemas
-│   ├── core/            # Core simulation engines
-│   └── database/        # Database configuration
-├── tests/               # Unit and integration tests
-├── main.py             # FastAPI application entry point
-├── config.py           # Configuration management
-└── requirements.txt    # Python dependencies
+app/
+	core/         # Simulation engine and decision logic
+	database/     # SQLAlchemy sessions, repositories, utilities
+	mongo_db/     # MongoDB connection, schemas, repositories, analytics
+	models/       # SQLAlchemy models
+	routers/      # API route handlers
+	schemas/      # Request and response contracts
+frontend/       # Lightweight frontend for local interaction
+tests/          # Unit and integration tests
+main.py         # FastAPI app bootstrap
+config.py       # Environment-driven settings
 ```
 
-## Installation
+## Quick Start
+
+### 1) Create and activate a virtual environment
+
+Windows (Git Bash):
 
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv .venv
+source .venv/Scripts/activate
+```
 
-# Install dependencies
+Linux/macOS:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 2) Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-# Setup environment
+### 3) Configure environment variables
+
+```bash
 cp .env.example .env
 ```
 
-## Running the Server
+Update `.env` with your preferred database settings.
+
+### 4) Run the API
 
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-API will be available at `http://localhost:8000`
-- API Docs: `http://localhost:8000/docs`
+Server URLs:
 
-## Running Tests
+- API: http://127.0.0.1:8000
+- OpenAPI docs: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+
+## Test
 
 ```bash
-pytest
-pytest -v  # Verbose output
-pytest tests/test_agent.py  # Specific file
+pytest -v
 ```
 
-## Development
+## API and Data References
 
-Currently in Phase 1: Project structure and dependencies
+- API contract: `API_CONTRACT.md`
+- SQL schema docs: `DATABASE_SCHEMA.md`
+- MongoDB schema docs: `MONGODB_SCHEMA.md`
+- MongoDB implementation notes: `MONGODB_IMPLEMENTATION.md`
+- Postman collection: `postman_collection.json`
+
+## Notes
+
+- Local SQLite database files are ignored by Git via `.gitignore`.
+- Line endings are normalized via `.gitattributes` to keep commits clean across OSes.
