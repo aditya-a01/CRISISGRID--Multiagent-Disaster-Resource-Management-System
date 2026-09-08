@@ -1,3 +1,4 @@
+"""YIIIOO"""
 """Main FastAPI application"""
 
 from fastapi import FastAPI
